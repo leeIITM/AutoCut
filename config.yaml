@@ -1,0 +1,10 @@
+silence_threshold: -40
+min_silence_duration: 0.5
+padding: 0.1
+
+whisper_model: base
+
+caption_font_size: 24
+
+transition_type: fade
+transition_duration: 0.5
