@@ -74,3 +74,59 @@ def get_keep_intervals(silent_intervals, video_duration):
         keep.append((current, video_duration))
 
     return keep
+
+
+### ======================================================================== ###
+###                         Alternative using silero-vad
+### ========================================================================== ###
+from silero_vad import load_silero_vad, get_speech_timestamps
+import torchaudio
+
+
+def detect_speech_silero(audio_path):
+    """
+    Returns:
+    [
+        (start_sec, end_sec),
+        ...
+    ]
+    """
+
+    model = load_silero_vad()
+
+    wav, sr = torchaudio.load(audio_path)
+
+    # Convert stereo -> mono if needed
+    if wav.shape[0] > 1:
+        wav = wav.mean(dim=0, keepdim=True)
+
+    speech_timestamps = get_speech_timestamps(
+        wav[0],
+        model,
+        sampling_rate=sr
+    )
+
+    speech_intervals = []
+
+    for segment in speech_timestamps:
+        start_sec = segment["start"] / sr
+        end_sec = segment["end"] / sr
+
+        speech_intervals.append(
+            (start_sec, end_sec)
+        )
+
+    return speech_intervals
+
+def add_padding(speech_intervals, video_duration,
+                before=0.15, after=0.15):
+
+    padded = []
+
+    for start, end in speech_intervals:
+        new_start = max(0, start - before)
+        new_end = min(video_duration, end + after)
+
+        padded.append((new_start, new_end))
+
+    return padded
