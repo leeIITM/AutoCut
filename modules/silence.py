@@ -130,3 +130,28 @@ def add_padding(speech_intervals, video_duration,
         padded.append((new_start, new_end))
 
     return padded
+
+import subprocess
+
+
+def remove_silence(
+        input_video,
+        output_video):
+
+    cmd = [
+        "ffmpeg",
+        "-i",
+        input_video,
+        "-af",
+        "silenceremove="
+        "start_periods=1:"
+        "start_threshold=-40dB:"
+        "stop_periods=-1:"
+        "stop_threshold=-40dB",
+        "-c:v",
+        "copy",
+        output_video,
+        "-y"
+    ]
+
+    subprocess.run(cmd)
