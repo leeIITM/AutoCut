@@ -1,4 +1,8 @@
+
+
+
 import json
+import re
 import ollama
 
 from .prompts import SYSTEM_PROMPT
@@ -7,7 +11,7 @@ from .prompts import SYSTEM_PROMPT
 def review_chunks(chunks):
 
     prompt = f"""
-Transcript Segments:
+Analyze these transcript chunks.
 
 {json.dumps(chunks, indent=2)}
 
@@ -30,4 +34,13 @@ Return JSON only.
 
     content = response["message"]["content"]
 
-    return json.loads(content)
+    match = re.search(
+        r'\{.*\}',
+        content,
+        re.DOTALL
+    )
+
+    if not match:
+        raise ValueError(content)
+
+    return json.loads(match.group())

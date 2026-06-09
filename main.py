@@ -11,8 +11,11 @@ from modules.silence import (
 from modules.video import cut_video_segments
 
 from modules.captions import (
-    transcribe_video,
-    generate_srt
+    transcribe_video
+)
+
+from modules.ass_generator import (
+    generate_ass
 )
 
 from modules.utils import run_ffmpeg
@@ -55,7 +58,7 @@ def concatenate_segments(segment_paths, output_video):
 
 def burn_captions(
         input_video,
-        srt_file,
+        ass_file,
         output_video):
 
     run_ffmpeg([
@@ -64,18 +67,11 @@ def burn_captions(
         "-i",
         input_video,
         "-vf",
-        (
-            f"subtitles={srt_file}:"
-            "force_style='"
-            "Alignment=2,"
-            "FontSize=22,"
-            "Outline=2'"
-        ),
+        f"ass={ass_file}",
         "-c:a",
         "copy",
         output_video
     ])
-
 
 def process_video(video_path):
 
@@ -85,7 +81,7 @@ def process_video(video_path):
 
     no_silence_video = "output/no_silence.mp4"
 
-    srt_file = "output/captions.srt"
+    ass_file = "output/captions.ass"
 
     final_video = "output/final.mp4"
 
@@ -126,16 +122,16 @@ def process_video(video_path):
         no_silence_video
     )
 
-    generate_srt(
-        segments,
-        srt_file
-    )
+    generate_ass(
+    segments,
+    ass_file
+)
 
     print("[6/6] Burning captions...")
 
     burn_captions(
         no_silence_video,
-        srt_file,
+        ass_file,
         final_video
     )
 

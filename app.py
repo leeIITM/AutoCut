@@ -1,9 +1,8 @@
 import gradio as gr
-
 from main import process_video
 
 
-def autocut(video):
+def run_autocut(video):
 
     if video is None:
         return None
@@ -13,12 +12,10 @@ def autocut(video):
     return output_video
 
 
-with gr.Blocks(title="AutoCut") as demo:
+with gr.Blocks(title="AutoCut") as app:
 
-    gr.Markdown(
-        "# AutoCut\n"
-        "Upload a video and get an edited version."
-    )
+    gr.Markdown("# AutoCut")
+    gr.Markdown("Upload a video and get the edited version.")
 
     with gr.Row():
 
@@ -27,17 +24,15 @@ with gr.Blocks(title="AutoCut") as demo:
         )
 
         output_video = gr.Video(
-            label="Processed Output"
+            label="Edited Video"
         )
 
-    process_btn = gr.Button(
-        "Process Video"
-    )
+    process_btn = gr.Button("Process")
 
     process_btn.click(
-        fn=autocut,
+        fn=run_autocut,
         inputs=input_video,
         outputs=output_video
     )
 
-demo.launch()
+app.launch()

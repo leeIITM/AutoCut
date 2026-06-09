@@ -1,6 +1,6 @@
 from faster_whisper import WhisperModel
 
-
+# Given a video file path, transcribe the audio and return the segments with word timestamps.
 def transcribe_video(video_path):
 
     model = WhisperModel(
@@ -14,8 +14,7 @@ def transcribe_video(video_path):
         word_timestamps=True
     )
 
-    return segments
-
+    return list(segments)
 
 def seconds_to_srt(seconds):
 
